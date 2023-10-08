@@ -1,0 +1,14 @@
+{
+    "FIELD_REQUIRED": "{field} harus di isi",
+    "FIELD_MIN": "{field} minimal {min} karakter",
+    "FIELD_CONFIRM": "Isi {confirm} tidak sama dengan {field}",
+    "EMAIL_INVALID": "Format email tidak valid",
+    "EMAIL_EXIST": "Email sudah terdaftar",
+
+    "LOGOUT_SUCCESS": "Logout {title} berhasil",
+    "LOGOUT_FAILED": "Logout gagal",
+    
+    "AUTH_REQUIRED": "Untuk mengakses halaman tersebut anda harus login",
+    "EMAIL_NOT_FOUND": "Email tidak di temukan",
+    "WRONG_PASSWORD": "Password yang anda masukan salah"
+}
