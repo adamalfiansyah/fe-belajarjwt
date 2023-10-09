@@ -8,7 +8,6 @@ export default function ({ $axios, store, redirect }) {
   })
 
   $axios.onResponseError((error) => {
-    console.log(error.response)
     if (
       error.response.status === 401 &&
       error.response.data.message == 'TOKEN_FROM_OTHER_DEVICES'
