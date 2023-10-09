@@ -8,7 +8,14 @@ export default function ({ $axios, store, redirect }) {
   })
 
   $axios.onResponseError((error) => {
+    console.log(error.response)
     if (
+      error.response.status === 401 &&
+      error.response.data.message == 'TOKEN_FROM_OTHER_DEVICES'
+    ) {
+      store.commit('auth/logout')
+      return redirect('/login')
+    } else if (
       error.response.status === 401 &&
       (error.response.data.message == 'TOKEN_EXPIRED' ||
         error.response.data.message == 'TOKEN_IS_NOT_VALID')
@@ -30,7 +37,8 @@ export default function ({ $axios, store, redirect }) {
           if (
             error.response.data.message === 'REFRESH_TOKEN_EXPIRED' ||
             error.response.data.message === 'REFRESH_TOKEN_INVALID' ||
-            error.response.data.message === 'TOKEN_IS_NOT_VALID'
+            error.response.data.message === 'TOKEN_IS_NOT_VALID' ||
+            error.response.data.message === 'TOKEN_FROM_OTHER_DEVICES'
           ) {
             store.commit('auth/logout')
             return redirect('/login')
