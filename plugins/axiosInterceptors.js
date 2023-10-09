@@ -8,16 +8,18 @@ export default function ({ $axios, store, redirect }) {
   })
 
   $axios.onResponseError((error) => {
-    if (error.response.status === 401) {
+    if (
+      error.response.status === 401 &&
+      (error.response.data.message == 'TOKEN_EXPIRED' ||
+        error.response.data.message == 'TOKEN_IS_NOT_VALID')
+    ) {
       return $axios
         .$post('refresh-token', {
           refreshToken: store.state.auth.refresh_token,
         })
         .then((response) => {
-          console.log(response)
           store.commit('auth/setAccessToken', response.accessToken)
           store.commit('auth/setRefreshToken', response.refreshToken)
-
           const originalRequest = error.config
           originalRequest.headers[
             'Authorization'
@@ -27,12 +29,19 @@ export default function ({ $axios, store, redirect }) {
         .catch((error) => {
           if (
             error.response.data.message === 'REFRESH_TOKEN_EXPIRED' ||
-            error.response.data.message === 'REFRESH_TOKEN_INVALID'
+            error.response.data.message === 'REFRESH_TOKEN_INVALID' ||
+            error.response.data.message === 'TOKEN_IS_NOT_VALID'
           ) {
             store.commit('auth/logout')
             return redirect('/login')
           }
         })
+    } else if (
+      error.response.data.message === 'REFRESH_TOKEN_EXPIRED' ||
+      error.response.data.message === 'REFRESH_TOKEN_INVALID'
+    ) {
+      store.commit('auth/logout')
+      return redirect('/login')
     }
   })
 }
