@@ -7,6 +7,9 @@
                     <v-spacer></v-spacer>
                 </v-toolbar>
             </v-card>
+            <div class="text-center">
+                <v-icon v-if="loading" class="ml-3 spin-loading">mdi-loading</v-icon>
+            </div>
             <div v-if="userAccess.length > 0" >
                 <v-alert
                     v-if="alert.show"
@@ -24,7 +27,6 @@
                                 small
                                 text
                                 color="secondary"
-                                :loading="isDisable"
                                 @click="deleteItem(item)">
                                 Logout
                             </v-btn>
@@ -73,7 +75,8 @@ export default {
             },
             dialogDelete: false,
             itemDelete: false,
-            loading: false,
+            loading: false, 
+            isDisableDelete: false, 
             userAccess: [],
             breadcrumbs: [
                 {
@@ -91,13 +94,7 @@ export default {
             this.$axios.$get(`/profiles/log-login`)
             .then(response => {
                     this.userAccess = response.userAccess
-                    // this.loading = false
-                    // this.users = response.users.docs
-                    // this.totalData = response.users.totalDocs
-
-                    // // let startItem = (page - 1) * itemsPerPage + 1
-                    // let startItem = response.users.pagingCounter
-                    // this.users.map(user => user.row = startItem++)
+                    this.loading = false
                 })
                 .catch(err => {
                     this.loading = false
@@ -113,7 +110,8 @@ export default {
                 return `${agent.os.name} ${agent.os.version}`
             }
         },
-        deleteConfirm(userAccessId) {            
+        deleteConfirm(userAccessId) {  
+            this.isDisableDelete = true          
             this.$axios.$post(`/profiles/remote-logout/${userAccessId}`)
                 .then(response => {
                     //process hapus data di data-table
@@ -126,6 +124,7 @@ export default {
                     this.showAlert(params)
 
                     this.closeDelete()
+                    this.isDisableDelete = false
                 })
                 .catch(err => {
                     let params = {
